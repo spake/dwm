@@ -4,6 +4,7 @@
 include config.mk
 
 SRC = util.c draw.c dwm.c
+DOTFILE = ${HOME}/.dwm.h
 OBJ = ${SRC:.c=.o}
 
 all: options dwm
@@ -21,8 +22,8 @@ options:
 ${OBJ}: config.h config.mk
 
 config.h:
-	@echo creating $@ from config.def.h
-	@cp config.def.h $@
+	@echo creating $@ from ${DOTFILE}
+	@cp ${DOTFILE} $@
 
 dwm: ${OBJ}
 	@echo CC -o $@
@@ -30,7 +31,7 @@ dwm: ${OBJ}
 
 clean:
 	@echo cleaning
-	@rm -f dwm ${OBJ} dwm-${VERSION}.tar.gz
+	@rm -f dwm ${OBJ} dwm-${VERSION}.tar.gz config.h
 
 dist: clean
 	@echo creating dist tarball
