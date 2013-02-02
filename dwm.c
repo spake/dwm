@@ -224,6 +224,7 @@ static void setup(void);
 static void showhide(Client *c);
 static void sigchld(int unused);
 static void spawn(const Arg *arg);
+static void spawn_dmenu(const Arg *arg);
 static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
 static int textnw(const char *text, unsigned int len);
@@ -1678,6 +1679,22 @@ spawn(const Arg *arg) {
 		setsid();
 		execvp(((char **)arg->v)[0], (char **)arg->v);
 		fprintf(stderr, "dwm: execvp %s", ((char **)arg->v)[0]);
+		perror(" failed");
+		exit(EXIT_SUCCESS);
+	}
+}
+
+void
+spawn_dmenu(const Arg *arg) {
+	if(fork() == 0) {
+		if(dpy)
+			close(ConnectionNumber(dpy));
+		setsid();
+		char monnum[255]; /* the number of the currently focused monitor */
+		snprintf(monnum, 255, "%d", selmon->num);
+		char *cmd[] = { "dmenu_run", "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, "-m", monnum, NULL }; /* pass monnum to dmenu so that it appears on the currently focused monitor instead of following the mouse pointer */
+		execvp(cmd[0], cmd);
+		fprintf(stderr, "dwm: execvp %s", cmd[0]);
 		perror(" failed");
 		exit(EXIT_SUCCESS);
 	}
